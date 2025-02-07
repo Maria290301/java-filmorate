@@ -25,22 +25,23 @@ public class FilmController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Film> updateFilm(@PathVariable int id, @Valid @RequestBody Film updatedFilm){
-        for (Film film: films){
-            if(film.getId() == id){
-                film.setName((updatedFilm.getName()));
-                film.setDescription((updatedFilm.getDescription()));
-                film.setReleaseDate((updatedFilm.getReleaseDate()));
-                film.setDuration((updatedFilm.getDuration()));
+    public ResponseEntity<Film> updateFilm(@PathVariable int id, @Valid @RequestBody Film updatedFilm) {
+        for (Film film : films) {
+            if (film.getId() == id) {
+                film.setName(updatedFilm.getName());
+                film.setDescription(updatedFilm.getDescription());
+                film.setReleaseDate(updatedFilm.getReleaseDate());
+                film.setDuration(updatedFilm.getDuration());
                 log.info("Обновлен фильм: {}", film);
                 return ResponseEntity.ok(film);
             }
         }
+        log.warn("Фильм с id {} не найден", id);
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping
-    public List<Film> getFilms(){
+    public List<Film> getFilms() {
         return films;
     }
 }
