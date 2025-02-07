@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 *.class
 *.log
 *.jar
@@ -9,12 +11,26 @@
 *.rar
 hs_err_pid*
 out/
+>>>>>>> 5aff4c37c2dfd8655dec4e019de488aa6bb591c2
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+<<<<<<< HEAD
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+=======
 ### STS ###
+>>>>>>> 5aff4c37c2dfd8655dec4e019de488aa6bb591c2
 .apt_generated
 .classpath
 .factorypath
@@ -23,12 +39,15 @@ target/
 .springBeans
 .sts4-cache
 
+<<<<<<< HEAD
+=======
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 
+>>>>>>> 5aff4c37c2dfd8655dec4e019de488aa6bb591c2
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -42,5 +61,10 @@ build/
 ### VS Code ###
 .vscode/
 
+<<<<<<< HEAD
+### Mac OS ###
+.DS_Store
+=======
 *.db
 db/*
+>>>>>>> 5aff4c37c2dfd8655dec4e019de488aa6bb591c2
