@@ -1,10 +1,11 @@
+
 # Игнорирование временных и бинарных файлов
 
 # Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+!/src/main//target/
+!/src/test//target/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -31,11 +32,14 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+!/src/main//build/
+!/src/test//build/
 
 ### VS Code ###
 .vscode/
 
 ### Mac OS ###
 .DS_Store
+*.class
+*.jar
+
