@@ -1,4 +1,4 @@
-package Film;
+package ru.yandex.practicum.filmorate.Film;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;

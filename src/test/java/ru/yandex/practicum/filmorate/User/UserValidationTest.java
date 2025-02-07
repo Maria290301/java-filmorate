@@ -1,4 +1,4 @@
-package User;
+package ru.yandex.practicum.filmorate.User;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;

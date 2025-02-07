@@ -1,4 +1,4 @@
-package Film;
+package ru.yandex.practicum.filmorate.Film;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
