@@ -18,4 +18,15 @@ public class User {
     private String name;
     private LocalDate birthday;
 
+    @NotBlank(message = "Электронная почта не может быть пустой")
+    @Email(message = "Электронная почта должна содержать символ @")
+    private String email;
+
+    @NotBlank(message = "Логин не может быть пустым")
+    private String login;
+
+    private String name;
+
+    @Past(message = "Дата рождения не может быть в будущем")
+    private LocalDate birthday;
 }

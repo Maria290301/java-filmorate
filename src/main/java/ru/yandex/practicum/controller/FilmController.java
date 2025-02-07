@@ -17,11 +17,14 @@ import java.util.Optional;
 public class FilmController {
 
     private final List<Film> films = new ArrayList<>();
-    private int filmIdCounter = 1; // Счетчик для уникальных ID
+    private int filmIdCounter = 1;
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
-        film.setId(filmIdCounter++); // Устанавливаем уникальный ID
+        film.setId(filmIdCounter++);
+
+    @PostMapping
+    public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
         films.add(film);
         log.info("Добавлен фильм: {}", film);
         return new ResponseEntity<>(film, HttpStatus.CREATED);
@@ -38,6 +41,15 @@ public class FilmController {
             film.setDuration(updatedFilm.getDuration());
             log.info("Обновлен фильм: {}", film);
             return ResponseEntity.ok(film);
+        for (Film film : films) {
+            if (film.getId() == id) {
+                film.setName(updatedFilm.getName());
+                film.setDescription(updatedFilm.getDescription());
+                film.setReleaseDate(updatedFilm.getReleaseDate());
+                film.setDuration(updatedFilm.getDuration());
+                log.info("Обновлен фильм: {}", film);
+                return ResponseEntity.ok(film);
+            }
         }
         log.warn("Фильм с id {} не найден", id);
         return ResponseEntity.notFound().build();
@@ -48,4 +60,3 @@ public class FilmController {
         return films;
     }
 }
-

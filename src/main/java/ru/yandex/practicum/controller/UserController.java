@@ -17,11 +17,14 @@ import java.util.Optional;
 public class UserController {
 
     private final List<User> users = new ArrayList<>();
-    private int userIdCounter = 1; // Счетчик для уникальных ID
-
+    private int userIdCounter = 1; 
+  
     @PostMapping
     public ResponseEntity<User> addUser (@Valid @RequestBody User user) {
-        user.setId(userIdCounter++); // Устанавливаем уникальный ID
+        user.setId(userIdCounter++);
+
+    @PostMapping
+    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
         users.add(user);
         log.info("Добавлен пользователь: {}", user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
@@ -40,11 +43,25 @@ public class UserController {
             return ResponseEntity.ok(user);
         }
         log.warn("Пользователь с id {} не найден", id);
+        for (User  user : users) {
+            if (user.getId() == id) {
+                user.setEmail(updatedUser .getEmail());
+                user.setLogin(updatedUser .getLogin());
+                user.setName(updatedUser .getName());
+                user.setBirthday(updatedUser .getBirthday());
+                log.info("Обновлен пользователь: {}", user);
+                return ResponseEntity.ok(user);
+            }
+        }
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping
     public List<User> getUsers() {
+        return users;
+    }
+}
+    public List<User> getUsers(){
         return users;
     }
 }
