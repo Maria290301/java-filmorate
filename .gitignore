@@ -1,3 +1,6 @@
+# Игнорирование временных и бинарных файлов
+
+# Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
