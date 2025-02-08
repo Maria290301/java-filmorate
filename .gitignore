@@ -1,38 +1,37 @@
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# Системные файлы
+.DS_Store
+Thumbs.db
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
+# Файлы IDE
+.idea/
 *.iml
 *.ipr
+*.iws
 
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# Директории сборки
+/target/
+out/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Двоичные файлы
+*.class
+*.jar
+*.war
 
-### VS Code ###
-.vscode/
+# Логи
+*.log
 
-### Mac OS ###
-.DS_Store
+# Базы данных
+*.db
+
+# Временные файлы
+*.tmp
+*.temp
+
+# Конфиденциальные файлы
+*.env
+*.secret
+
+# Другие игнорируемые файлы
+*.DS_Store
+*.swp
+*.swo
