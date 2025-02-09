@@ -1,37 +1,44 @@
-# Системные файлы
-.DS_Store
-Thumbs.db
+# Игнорирование папки target
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Файлы IDE
-.idea/
+### IntelliJ IDEA ###
+.idea/  # Добавлено для игнорирования всей папки .idea
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
 *.iml
 *.ipr
-*.iws
 
-# Директории сборки
-/target/
-out/
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# Двоичные файлы
-*.class
-*.jar
-*.war
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# Логи
-*.log
+### VS Code ###
+.vscode/
 
-# Базы данных
-*.db
+### Mac OS ###
+.DS_Store
 
-# Временные файлы
-*.tmp
-*.temp
-
-# Конфиденциальные файлы
-*.env
-*.secret
-
-# Другие игнорируемые файлы
-*.DS_Store
-*.swp
-*.swo
+### Бинарные файлы ###
+*.class  # Игнорирование файлов .class
+*.jar    # Игнорирование файлов .jar
