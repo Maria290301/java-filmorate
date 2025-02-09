@@ -11,9 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.controller.UserController;
 import ru.yandex.practicum.model.User;
-
 import java.time.LocalDate;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -41,11 +39,9 @@ public class UserControllerTest {
         user.setLogin("validLogin");
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String userJson = objectMapper.writeValueAsString(user);
-
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
@@ -60,11 +56,9 @@ public class UserControllerTest {
         user.setLogin("validLogin");
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String userJson = objectMapper.writeValueAsString(user);
-
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
@@ -79,11 +73,9 @@ public class UserControllerTest {
         user.setLogin("");
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String userJson = objectMapper.writeValueAsString(user);
-
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
@@ -98,18 +90,15 @@ public class UserControllerTest {
         newUser .setLogin("originaluser");
         newUser .setName("Original User");
         newUser .setBirthday(LocalDate.of(1990, 1, 1));
-
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(newUser )))
                 .andExpect(status().isCreated());
-
         User updatedUser  = new User();
         updatedUser .setEmail("updated@example.com");
         updatedUser .setLogin("updateduser");
         updatedUser .setName("Updated User");
         updatedUser .setBirthday(LocalDate.of(1990, 1, 1));
-
         mockMvc.perform(put("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(updatedUser )))
@@ -127,17 +116,14 @@ public class UserControllerTest {
         user1.setLogin("login1");
         user1.setName("User  One");
         user1.setBirthday(LocalDate.of(2000, 1, 1));
-
         User user2 = new User();
         user2.setId(2);
         user2.setEmail("test2@example.com");
         user2.setLogin("login2");
         user2.setName("User  Two");
         user2.setBirthday(LocalDate.of(1995, 5, 5));
-
         userController.addUser (user1);
         userController.addUser (user2);
-
         mockMvc.perform(get("/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

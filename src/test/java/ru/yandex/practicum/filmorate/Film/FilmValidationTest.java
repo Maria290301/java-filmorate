@@ -8,7 +8,6 @@ import ru.yandex.practicum.model.Film;
 import jakarta.validation.ConstraintViolation;
 import java.time.LocalDate;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FilmValidationTest {
@@ -28,7 +27,6 @@ public class FilmValidationTest {
         film.setDescription("A valid description.");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
-
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(1, violations.size());
         assertEquals("Название не может быть пустым", violations.iterator().next().getMessage());
@@ -41,7 +39,6 @@ public class FilmValidationTest {
         film.setDescription("A valid description.");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(-10);
-
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(1, violations.size());
         assertEquals("Продолжительность фильма должна быть положительным числом", violations.iterator().next().getMessage());
@@ -54,13 +51,11 @@ public class FilmValidationTest {
         film.setDescription("A valid description.");
         film.setReleaseDate(LocalDate.now().plusDays(1));
         film.setDuration(120);
-
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         System.out.println("Количество нарушений: " + violations.size());
         for (ConstraintViolation<Film> violation : violations) {
             System.out.println("Нарушение: " + violation.getMessage());
         }
-
         assertEquals(1, violations.size());
         assertEquals("Дата релиза не может быть раньше 28 декабря 1895 года", violations.iterator().next().getMessage());
     }

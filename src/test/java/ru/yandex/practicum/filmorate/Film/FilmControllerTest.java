@@ -9,9 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.controller.FilmController;
 import ru.yandex.practicum.model.Film;
-
 import java.time.LocalDate;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,7 +30,6 @@ public class FilmControllerTest {
         film.setDescription("This is a valid description.");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String filmJson = objectMapper.writeValueAsString(film);
@@ -51,7 +48,6 @@ public class FilmControllerTest {
         film.setDescription("This is a valid description.");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(-10);
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String filmJson = objectMapper.writeValueAsString(film);
@@ -70,7 +66,6 @@ public class FilmControllerTest {
         film.setDescription("This is a valid description.");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String filmJson = objectMapper.writeValueAsString(film);
@@ -89,11 +84,9 @@ public class FilmControllerTest {
         film.setDescription(null);
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String filmJson = objectMapper.writeValueAsString(film);
-
         mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(filmJson))
@@ -108,11 +101,9 @@ public class FilmControllerTest {
         film.setDescription("This film is set in the future.");
         film.setReleaseDate(LocalDate.now().plusDays(1));
         film.setDuration(120);
-
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String filmJson = objectMapper.writeValueAsString(film);
-
         mockMvc.perform(post("/films")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(filmJson))

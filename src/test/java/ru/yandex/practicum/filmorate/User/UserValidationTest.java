@@ -7,10 +7,8 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.model.User;
-
 import java.time.LocalDate;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserValidationTest {
@@ -30,7 +28,6 @@ public class UserValidationTest {
         user.setLogin("validLogin");
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertEquals(1, violations.size());
         assertEquals("Электронная почта не может быть пустой", violations.iterator().next().getMessage());
@@ -43,7 +40,6 @@ public class UserValidationTest {
         user.setLogin("validLogin");
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertEquals(1, violations.size());
         assertEquals("Электронная почта должна содержать символ @", violations.iterator().next().getMessage());
@@ -56,13 +52,11 @@ public class UserValidationTest {
         user.setLogin("");
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         System.out.println("Количество нарушений: " + violations.size());
         for (ConstraintViolation<User> violation : violations) {
             System.out.println("Нарушение: " + violation.getMessage());
         }
-
         assertEquals(1, violations.size());
         assertEquals("Логин не может быть пустым", violations.iterator().next().getMessage());
     }
