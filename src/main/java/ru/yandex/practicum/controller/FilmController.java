@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.Film;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -14,33 +16,33 @@ import java.util.List;
 @RequestMapping("/films")
 public class FilmController {
 
-    private final List<Film> films = new ArrayList<>();
+    private final HashMap<Integer, Film> films = new HashMap<>();
+
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
-        films.add(film);
+        if (films.containsKey(film.getId())) {
+            log.warn("Фильм с id {} уже существует", film.getId());
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        films.put(film.getId(), film);
         log.info("Добавлен фильм: {}", film);
         return new ResponseEntity<>(film, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Film> updateFilm(@PathVariable int id, @Valid @RequestBody Film updatedFilm) {
-        for (Film film : films) {
-            if (film.getId() == id) {
-                film.setName(updatedFilm.getName());
-                film.setDescription(updatedFilm.getDescription());
-                film.setReleaseDate(updatedFilm.getReleaseDate());
-                film.setDuration(updatedFilm.getDuration());
-                log.info("Обновлен фильм: {}", film);
-                return ResponseEntity.ok(film);
+    @PutMapping
+    public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film updatedFilm) {
+        if (films.containsKey(updatedFilm.getId())) {
+            films.put(updatedFilm.getId(), updatedFilm);
+                log.info("Обновлен фильм: {}", updatedFilm);
+                return ResponseEntity.ok(updatedFilm);
             }
-        }
-        log.warn("Фильм с id {} не найден", id);
+        log.warn("Фильм с id {} не найден", updatedFilm.getId());
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping
     public List<Film> getFilms() {
-        return films;
+        return new ArrayList<>(films.values());
     }
 }

@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.model.User;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -14,32 +16,31 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private final List<User> users = new ArrayList<>();
+    private final HashMap<Integer, User> users = new HashMap<>();
 
     @PostMapping
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
-        users.add(user);
+        if (users.containsKey(user.getId())) {
+            log.warn("Пользователь с id {} уже существует", user.getId());
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        users.put(user.getId(), user);
         log.info("Добавлен пользователь: {}", user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser (@PathVariable("id") int id, @Valid @RequestBody User updatedUser ) {
-        for (User  user : users) {
-            if (user.getId() == id) {
-                user.setEmail(updatedUser .getEmail());
-                user.setLogin(updatedUser .getLogin());
-                user.setName(updatedUser .getName());
-                user.setBirthday(updatedUser .getBirthday());
-                log.info("Обновлен пользователь: {}", user);
-                return ResponseEntity.ok(user);
+    @PutMapping
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User updatedUser) {
+            if (users.containsKey(updatedUser.getId())) {
+                users.put(updatedUser.getId(), updatedUser);
+                log.info("Обновлен пользователь: {}", updatedUser);
+                return ResponseEntity.ok(updatedUser);
             }
-        }
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping
     public List<User> getUsers(){
-        return users;
+        return new ArrayList<>(users.values());
     }
 }

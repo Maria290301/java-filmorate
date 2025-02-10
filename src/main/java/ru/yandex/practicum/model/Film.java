@@ -9,10 +9,10 @@ import ru.yandex.practicum.exception.ReleaseDate;
 public class Film {
     private int id;
 
-    @NotEmpty(message = "Название не может быть пустым")
+    @NotBlank(message = "Название не может быть пустым")
     private String name;
 
-    @NotNull(message = "Description cannot be null")
+    @NotBlank(message = "Описание не может быть пустым")
     @Size(max = 200, message = "Максимальная длина описания — 200 символов")
     private String description;
 

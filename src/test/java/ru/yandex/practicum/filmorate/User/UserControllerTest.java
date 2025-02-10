@@ -95,11 +95,12 @@ public class UserControllerTest {
                         .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(newUser )))
                 .andExpect(status().isCreated());
         User updatedUser  = new User();
+        updatedUser .setId(1); // Убедитесь, что ID установлен
         updatedUser .setEmail("updated@example.com");
         updatedUser .setLogin("updateduser");
         updatedUser .setName("Updated User");
         updatedUser .setBirthday(LocalDate.of(1990, 1, 1));
-        mockMvc.perform(put("/users/1")
+        mockMvc.perform(put("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(updatedUser )))
                 .andExpect(status().isOk())
