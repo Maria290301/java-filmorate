@@ -18,7 +18,6 @@ public class FilmController {
 
     private final HashMap<Integer, Film> films = new HashMap<>();
 
-
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
         if (films.containsKey(film.getId())) {
@@ -46,7 +45,6 @@ public class FilmController {
         log.info("Обновлен фильм: {}", updatedFilm);
         return ResponseEntity.ok(updatedFilm);
     }
-
 
     @GetMapping
     public List<Film> getFilms() {
