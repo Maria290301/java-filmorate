@@ -34,9 +34,9 @@ public class FilmController {
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film updatedFilm) {
         if (films.containsKey(updatedFilm.getId())) {
             films.put(updatedFilm.getId(), updatedFilm);
-                log.info("Обновлен фильм: {}", updatedFilm);
-                return ResponseEntity.ok(updatedFilm);
-            }
+            log.info("Обновлен фильм: {}", updatedFilm);
+            return ResponseEntity.ok(updatedFilm);
+        }
         log.warn("Фильм с id {} не найден", updatedFilm.getId());
         return ResponseEntity.notFound().build();
     }

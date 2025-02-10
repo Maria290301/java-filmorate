@@ -31,16 +31,16 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User updatedUser) {
-            if (users.containsKey(updatedUser.getId())) {
-                users.put(updatedUser.getId(), updatedUser);
-                log.info("Обновлен пользователь: {}", updatedUser);
-                return ResponseEntity.ok(updatedUser);
-            }
+        if (users.containsKey(updatedUser.getId())) {
+            users.put(updatedUser.getId(), updatedUser);
+            log.info("Обновлен пользователь: {}", updatedUser);
+            return ResponseEntity.ok(updatedUser);
+        }
         return ResponseEntity.notFound().build();
     }
 
     @GetMapping
-    public List<User> getUsers(){
+    public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
 }

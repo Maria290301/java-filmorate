@@ -11,7 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.controller.UserController;
 import ru.yandex.practicum.model.User;
+
 import java.time.LocalDate;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -84,25 +86,25 @@ public class UserControllerTest {
 
     @Test
     public void updateUseValidUserReturnsOk() throws Exception {
-        User newUser  = new User();
-        newUser .setId(1);
-        newUser .setEmail("original@example.com");
-        newUser .setLogin("originaluser");
-        newUser .setName("Original User");
-        newUser .setBirthday(LocalDate.of(1990, 1, 1));
+        User newUser = new User();
+        newUser.setId(1);
+        newUser.setEmail("original@example.com");
+        newUser.setLogin("originaluser");
+        newUser.setName("Original User");
+        newUser.setBirthday(LocalDate.of(1990, 1, 1));
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(newUser )))
+                        .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(newUser)))
                 .andExpect(status().isCreated());
-        User updatedUser  = new User();
-        updatedUser .setId(1); // Убедитесь, что ID установлен
-        updatedUser .setEmail("updated@example.com");
-        updatedUser .setLogin("updateduser");
-        updatedUser .setName("Updated User");
-        updatedUser .setBirthday(LocalDate.of(1990, 1, 1));
+        User updatedUser = new User();
+        updatedUser.setId(1); // Убедитесь, что ID установлен
+        updatedUser.setEmail("updated@example.com");
+        updatedUser.setLogin("updateduser");
+        updatedUser.setName("Updated User");
+        updatedUser.setBirthday(LocalDate.of(1990, 1, 1));
         mockMvc.perform(put("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(updatedUser )))
+                        .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(updatedUser)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("updated@example.com"))
                 .andExpect(jsonPath("$.login").value("updateduser"))
@@ -123,8 +125,8 @@ public class UserControllerTest {
         user2.setLogin("login2");
         user2.setName("User  Two");
         user2.setBirthday(LocalDate.of(1995, 5, 5));
-        userController.addUser (user1);
-        userController.addUser (user2);
+        userController.addUser(user1);
+        userController.addUser(user2);
         mockMvc.perform(get("/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
