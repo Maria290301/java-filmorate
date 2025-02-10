@@ -32,14 +32,21 @@ public class FilmController {
 
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film updatedFilm) {
-        if (films.containsKey(updatedFilm.getId())) {
-            films.put(updatedFilm.getId(), updatedFilm);
-            log.info("Обновлен фильм: {}", updatedFilm);
-            return ResponseEntity.ok(updatedFilm);
+        if (!films.containsKey(updatedFilm.getId())) {
+            log.warn("Фильм с id {} не найден", updatedFilm.getId());
+            return ResponseEntity.notFound().build();
         }
-        log.warn("Фильм с id {} не найден", updatedFilm.getId());
-        return ResponseEntity.notFound().build();
+        for (Film film : films.values()) {
+            if (film.getId() != updatedFilm.getId() && film.getName().equals(updatedFilm.getName())) {
+                log.warn("Название фильма {} уже используется", updatedFilm.getName());
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+        }
+        films.put(updatedFilm.getId(), updatedFilm);
+        log.info("Обновлен фильм: {}", updatedFilm);
+        return ResponseEntity.ok(updatedFilm);
     }
+
 
     @GetMapping
     public List<Film> getFilms() {
