@@ -43,5 +43,3 @@ build/
 *.class  # Игнорирование файлов .class
 *.jar    # Игнорирование файлов .jar
 
-# Игнорирование файла checkstyle.xml
-checkstyle.xml
