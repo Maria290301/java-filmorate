@@ -31,25 +31,25 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User updatedUser) {
-        if (!users.containsKey(updatedUser .getId())) {
-            log.warn("Пользователь с id {} не найден", updatedUser .getId());
+        if (!users.containsKey(updatedUser.getId())) {
+            log.warn("Пользователь с id {} не найден", updatedUser.getId());
             return ResponseEntity.notFound().build();
         }
-        for (User  user : users.values()) {
-            if (user.getId() != updatedUser .getId()) {
-                if (user.getLogin().equals(updatedUser .getLogin())) {
-                    log.warn("Логин {} уже используется", updatedUser .getLogin());
+        for (User user : users.values()) {
+            if (user.getId() != updatedUser.getId()) {
+                if (user.getLogin().equals(updatedUser.getLogin())) {
+                    log.warn("Логин {} уже используется", updatedUser.getLogin());
                     return ResponseEntity.status(HttpStatus.CONFLICT).build();
                 }
-                if (user.getEmail().equals(updatedUser .getEmail())) {
-                    log.warn("Электронная почта {} уже используется", updatedUser .getEmail());
+                if (user.getEmail().equals(updatedUser.getEmail())) {
+                    log.warn("Электронная почта {} уже используется", updatedUser.getEmail());
                     return ResponseEntity.status(HttpStatus.CONFLICT).build();
                 }
             }
         }
-        users.put(updatedUser .getId(), updatedUser );
-        log.info("Обновлен пользователь: {}", updatedUser );
-        return ResponseEntity.ok(updatedUser );
+        users.put(updatedUser.getId(), updatedUser);
+        log.info("Обновлен пользователь: {}", updatedUser);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @GetMapping
