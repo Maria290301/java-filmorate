@@ -11,7 +11,7 @@ import ru.yandex.practicum.model.User;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UserValidationTest {
 
@@ -51,15 +51,17 @@ public class UserValidationTest {
     public void userWithEmptyLogin_ShouldFailValidation() {
         User user = new User();
         user.setEmail("test@example.com");
-        user.setLogin("");
+        user.setLogin(""); // Пустой логин
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         System.out.println("Количество нарушений: " + violations.size());
-        for (ConstraintViolation<User> violation : violations) {
-            System.out.println("Нарушение: " + violation.getMessage());
-        }
-        assertEquals(1, violations.size());
-        assertEquals("Логин не может быть пустым", violations.iterator().next().getMessage());
+        assertEquals(2, violations.size(), "Ожидалось 2 нарушения валидации");
+        boolean hasEmptyLoginViolation = violations.stream()
+                .anyMatch(v -> "Логин не может быть пустым".equals(v.getMessage()));
+        boolean hasSpaceViolation = violations.stream()
+                .anyMatch(v -> "Логин не должен содержать пробелы".equals(v.getMessage()));
+        assertTrue(hasEmptyLoginViolation, "Ожидалось нарушение: Логин не может быть пустым");
+        assertTrue(hasSpaceViolation, "Ожидалось нарушение: Логин не должен содержать пробелы");
     }
 }

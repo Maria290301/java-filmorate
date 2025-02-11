@@ -64,10 +64,11 @@ public class FilmControllerTest {
     public void addFilmEmptyNameReturnsBadRequest() throws Exception {
         Film film = new Film();
         film.setId(1);
-        film.setName("");
+        film.setName(""); // Пустое имя
         film.setDescription("This is a valid description.");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
+
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String filmJson = objectMapper.writeValueAsString(film);

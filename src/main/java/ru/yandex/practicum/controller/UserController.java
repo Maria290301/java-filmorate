@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.exception.UserNotFoundException;
 import ru.yandex.practicum.model.User;
 
 import java.util.ArrayList;
@@ -20,6 +21,11 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
+        int newId = users.size() + 1;
+        user.setId(newId);
+        if (user.getName() == null || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         if (users.containsKey(user.getId())) {
             log.warn("Пользователь с id {} уже существует", user.getId());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -31,9 +37,12 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User updatedUser) {
+        if (updatedUser.getId() <= 0) {
+            log.warn("ID пользователя должен быть положительным");
+            return ResponseEntity.badRequest().build();
+        }
         if (!users.containsKey(updatedUser.getId())) {
-            log.warn("Пользователь с id {} не найден", updatedUser.getId());
-            return ResponseEntity.notFound().build();
+            throw new UserNotFoundException("Пользователь с id " + updatedUser.getId() + " не найден");
         }
         for (User user : users.values()) {
             if (user.getId() != updatedUser.getId()) {

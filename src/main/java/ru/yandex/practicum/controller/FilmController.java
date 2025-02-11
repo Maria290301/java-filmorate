@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.exception.UserNotFoundException;
 import ru.yandex.practicum.model.Film;
 
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class FilmController {
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
+        int newId = films.size() + 1;
+        film.setId(newId);
         if (films.containsKey(film.getId())) {
             log.warn("Фильм с id {} уже существует", film.getId());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -32,8 +35,7 @@ public class FilmController {
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film updatedFilm) {
         if (!films.containsKey(updatedFilm.getId())) {
-            log.warn("Фильм с id {} не найден", updatedFilm.getId());
-            return ResponseEntity.notFound().build();
+            throw new UserNotFoundException("Пользователь с id " + updatedFilm.getId() + " не найден");
         }
         for (Film film : films.values()) {
             if (film.getId() != updatedFilm.getId() && film.getName().equals(updatedFilm.getName())) {
