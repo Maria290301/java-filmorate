@@ -18,17 +18,13 @@ import java.util.List;
 public class UserController {
 
     private final HashMap<Integer, User> users = new HashMap<>();
+    private int counter = 0;
 
     @PostMapping
     public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
-        int newId = users.size() + 1;
-        user.setId(newId);
+        user.setId(++counter);
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
-        }
-        if (users.containsKey(user.getId())) {
-            log.warn("Пользователь с id {} уже существует", user.getId());
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         users.put(user.getId(), user);
         log.info("Добавлен пользователь: {}", user);
@@ -37,10 +33,6 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<User> updateUser(@Valid @RequestBody User updatedUser) {
-        if (updatedUser.getId() <= 0) {
-            log.warn("ID пользователя должен быть положительным");
-            return ResponseEntity.badRequest().build();
-        }
         if (!users.containsKey(updatedUser.getId())) {
             throw new UserNotFoundException("Пользователь с id " + updatedUser.getId() + " не найден");
         }

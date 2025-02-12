@@ -18,15 +18,11 @@ import java.util.List;
 public class FilmController {
 
     private final HashMap<Integer, Film> films = new HashMap<>();
+    private int counter = 0;
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
-        int newId = films.size() + 1;
-        film.setId(newId);
-        if (films.containsKey(film.getId())) {
-            log.warn("Фильм с id {} уже существует", film.getId());
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        film.setId(++counter);
         films.put(film.getId(), film);
         log.info("Добавлен фильм: {}", film);
         return new ResponseEntity<>(film, HttpStatus.CREATED);
@@ -35,13 +31,7 @@ public class FilmController {
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film updatedFilm) {
         if (!films.containsKey(updatedFilm.getId())) {
-            throw new UserNotFoundException("Пользователь с id " + updatedFilm.getId() + " не найден");
-        }
-        for (Film film : films.values()) {
-            if (film.getId() != updatedFilm.getId() && film.getName().equals(updatedFilm.getName())) {
-                log.warn("Название фильма {} уже используется", updatedFilm.getName());
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
-            }
+            throw new UserNotFoundException("Фильм с id " + updatedFilm.getId() + " не найден");
         }
         films.put(updatedFilm.getId(), updatedFilm);
         log.info("Обновлен фильм: {}", updatedFilm);
