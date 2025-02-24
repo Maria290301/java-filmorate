@@ -1,21 +1,17 @@
-package ru.yandex.practicum.filmorate.film;
+package ru.yandex.practicum.filmorate.Film;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.controller.FilmController;
+import ru.yandex.practicum.model.Film;
 
 import java.time.LocalDate;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -23,13 +19,9 @@ public class FilmControllerTest {
 
     private MockMvc mockMvc;
 
-    @InjectMocks
-    private FilmController filmController;
-
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(filmController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new FilmController()).build();
     }
 
     @Test
@@ -72,7 +64,7 @@ public class FilmControllerTest {
     public void addFilmEmptyNameReturnsBadRequest() throws Exception {
         Film film = new Film();
         film.setId(1);
-        film.setName("");
+        film.setName(""); // Пустое имя
         film.setDescription("This is a valid description.");
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);

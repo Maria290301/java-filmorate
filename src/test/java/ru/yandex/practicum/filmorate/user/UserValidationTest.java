@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.user;
+package ru.yandex.practicum.filmorate.User;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -6,7 +6,7 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.model.User;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void userWithEmptyEmailShouldFailValidation() {
+    public void userWithEmptyEmail_ShouldFailValidation() {
         User user = new User();
         user.setEmail("");
         user.setLogin("validLogin");
@@ -36,7 +36,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void userWithInvalidEmailShouldFailValidation() {
+    public void userWithInvalidEmail_ShouldFailValidation() {
         User user = new User();
         user.setEmail("invalidEmail");
         user.setLogin("validLogin");
@@ -48,7 +48,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void userWithEmptyLoginShouldFailValidation() {
+    public void userWithEmptyLogin_ShouldFailValidation() {
         User user = new User();
         user.setEmail("test@example.com");
         user.setLogin(""); // Пустой логин

@@ -1,11 +1,11 @@
-package ru.yandex.practicum.filmorate.film;
+package ru.yandex.practicum.filmorate.Film;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.model.Film;
 import jakarta.validation.ConstraintViolation;
 
 import java.time.LocalDate;
