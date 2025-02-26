@@ -24,7 +24,7 @@ public class FilmValidationTest {
     }
 
     @Test
-    public void filmWithEmptyName_ShouldFailValidation() {
+    public void filmWithEmptyNameShouldFailValidation() {
         Film film = new Film();
         film.setName("");
         film.setDescription("A valid description.");
@@ -36,7 +36,7 @@ public class FilmValidationTest {
     }
 
     @Test
-    public void filmWithNegativeDuration_ShouldFailValidation() {
+    public void filmWithNegativeDurationShouldFailValidation() {
         Film film = new Film();
         film.setName("Valid Film");
         film.setDescription("A valid description.");
@@ -48,7 +48,7 @@ public class FilmValidationTest {
     }
 
     @Test
-    public void filmWithFutureReleaseDate_ShouldFailValidation() {
+    public void filmWithFutureReleaseDateShouldFailValidation() {
         Film film = new Film();
         film.setName("Valid Film");
         film.setDescription("A valid description.");

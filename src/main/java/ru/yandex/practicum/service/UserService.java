@@ -97,7 +97,7 @@ public class UserService {
         }
         List<User> commonFriends = user1.getFriends().stream()
                 .filter(user2.getFriends()::contains)
-                .map(userStorage::getUserById) // Получаем объекты пользователей
+                .map(userStorage::getUserById)
                 .collect(Collectors.toList());
 
         log.info("Пользователь {} и пользователь {} имеют {} общих друзей", userId1, userId2, commonFriends.size());

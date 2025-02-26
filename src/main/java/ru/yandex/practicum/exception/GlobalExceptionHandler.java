@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.Collections;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -42,5 +44,10 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Произошла ошибка: " + ex.getMessage()));
+    }
+
+    @ExceptionHandler(LikeAlreadyExistsException.class)
+    public ResponseEntity<Object> handleLikeAlreadyExistsException(LikeAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap("error", ex.getMessage()));
     }
 }

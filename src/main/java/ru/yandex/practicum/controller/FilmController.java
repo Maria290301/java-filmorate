@@ -6,18 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.exception.ErrorResponse;
-import ru.yandex.practicum.exception.FilmNotFoundException;
-import ru.yandex.practicum.exception.LikeNotFoundException;
-import ru.yandex.practicum.exception.UserNotFoundException;
+import ru.yandex.practicum.exception.*;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.service.FilmService;
 import ru.yandex.practicum.storage.FilmStorage;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -99,6 +94,9 @@ public class FilmController {
             Map<String, String> response = new HashMap<>();
             response.put("error", "Пользователь не найден");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (LikeAlreadyExistsException e) {
+            log.error("Ошибка при добавлении лайка: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (Exception e) {
             log.error("Ошибка при добавлении лайка: ", e);
             Map<String, String> response = new HashMap<>();
