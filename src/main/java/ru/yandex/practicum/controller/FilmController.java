@@ -94,9 +94,6 @@ public class FilmController {
             Map<String, String> response = new HashMap<>();
             response.put("error", "Пользователь не найден");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        } catch (LikeAlreadyExistsException e) {
-            log.error("Ошибка при добавлении лайка: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } catch (Exception e) {
             log.error("Ошибка при добавлении лайка: ", e);
             Map<String, String> response = new HashMap<>();

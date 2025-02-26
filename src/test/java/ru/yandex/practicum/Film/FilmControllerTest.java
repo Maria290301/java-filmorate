@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.controller.FilmController;
 import ru.yandex.practicum.exception.FilmNotFoundException;
-import ru.yandex.practicum.exception.LikeAlreadyExistsException;
 import ru.yandex.practicum.exception.LikeNotFoundException;
 import ru.yandex.practicum.exception.UserNotFoundException;
 import ru.yandex.practicum.model.Film;
@@ -189,18 +188,6 @@ public class FilmControllerTest {
         mockMvc.perform(delete("/films/{filmId}/like/{userId}", filmId, userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-    }
-
-    @Test
-    public void addLikeFilmAlreadyLikedReturnsConflict() throws Exception {
-        int filmId = 1;
-        int userId = 1;
-
-        doThrow(new LikeAlreadyExistsException("Пользователь уже лайкнул фильм с ID: " + filmId))
-                .when(filmService).addLike(filmId, userId);
-
-        mockMvc.perform(put("/films/{filmId}/like/{userId}", filmId, userId))
-                .andExpect(status().isConflict());
     }
 
     @Test

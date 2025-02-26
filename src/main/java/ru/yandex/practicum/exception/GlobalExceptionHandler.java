@@ -45,9 +45,4 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Произошла ошибка: " + ex.getMessage()));
     }
-
-    @ExceptionHandler(LikeAlreadyExistsException.class)
-    public ResponseEntity<Object> handleLikeAlreadyExistsException(LikeAlreadyExistsException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap("error", ex.getMessage()));
-    }
 }
