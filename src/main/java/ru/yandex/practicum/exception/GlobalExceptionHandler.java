@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,7 +24,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
-    @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class, DataNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, FilmNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorResponse> handleNotFoundExceptions(RuntimeException ex) {
         log.info("404 Not Found: {}", ex.getMessage());
