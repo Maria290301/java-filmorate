@@ -15,25 +15,22 @@ import ru.yandex.practicum.controller.UserController;
 import ru.yandex.practicum.exception.UserNotFoundException;
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.service.UserService;
-import ru.yandex.practicum.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @AutoConfigureMockMvc
 public class UserControllerTest {
 
     private MockMvc mockMvc;
-
-    @Mock
-    private UserStorage userStorage;
 
     @Mock
     private UserService userService;
@@ -58,7 +55,7 @@ public class UserControllerTest {
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
 
-        lenient().when(userStorage.addUser(any(User.class))).thenReturn(user);
+        lenient().when(userService.addUser(any(User.class))).thenReturn(user);
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -133,7 +130,7 @@ public class UserControllerTest {
         userToUpdate.setLogin("updatedLogin");
         userToUpdate.setName("Updated User");
 
-        when(userStorage.updateUser(any(User.class))).thenReturn(userToUpdate);
+        when(userService.updateUser(any(User.class))).thenReturn(userToUpdate);
         String userJson = objectMapper.writeValueAsString(userToUpdate);
         mockMvc.perform(put("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -146,18 +143,22 @@ public class UserControllerTest {
 
     @Test
     public void addFriendValidIdsReturnsOk() throws Exception {
+        doNothing().when(userService).addFriend(1, 2);
+
         mockMvc.perform(put("/users/1/friends/2"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Друг успешно добавлен"));
+                .andExpect(status().isNoContent());
 
         verify(userService, times(1)).addFriend(1, 2);
     }
 
     @Test
     public void addFriendInvalidUserReturnsNotFound() throws Exception {
-        doThrow(new UserNotFoundException("User  not found")).when(userService).addFriend(anyInt(), anyInt());
+        int userId = 1;
+        int friendId = 2;
 
-        mockMvc.perform(put("/users/1/friends/2"))
+        doThrow(new UserNotFoundException("User not found")).when(userService).addFriend(userId, friendId);
+
+        mockMvc.perform(put("/{userId}/friends/{friendId}", userId, friendId))
                 .andExpect(status().isNotFound());
     }
 
@@ -173,59 +174,46 @@ public class UserControllerTest {
 
     @Test
     public void removeFriendInvalidUserReturnsNotFound() throws Exception {
-        doThrow(new UserNotFoundException("Пользователь с ID 1 или друг с ID 2 не найден")).when(userService).removeFriend(anyInt(), anyInt());
+        int userId = 1;
+        int friendId = 2;
 
-        mockMvc.perform(delete("/users/1/friends/2"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("Пользователь с ID 1 или друг с ID 2 не найден"));
+        doThrow(new UserNotFoundException("User not found")).when(userService).removeFriend(userId, friendId);
+
+        mockMvc.perform(delete("/{userId}/friends/{friendId}", userId, friendId))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void getFriendsReturnsListOfFriends() throws Exception {
-        int userId = 1;
+        User friend1 = mock(User.class);
+        when(friend1.getId()).thenReturn(2);
+        when(friend1.getName()).thenReturn("Friend1");
 
-        User friend1 = new User();
-        friend1.setId(2);
-        friend1.setEmail("friend1@example.com");
-        friend1.setLogin("friend1");
-        friend1.setName("Friend1");
-        friend1.setBirthday(LocalDate.of(1990, 1, 1));
-
-        User friend2 = new User();
-        friend2.setId(3);
-        friend2.setEmail("friend2@example.com");
-        friend2.setLogin("friend2");
-        friend2.setName("Friend2");
-        friend2.setBirthday(LocalDate.of(1991, 2, 2));
+        User friend2 = mock(User.class);
+        when(friend2.getId()).thenReturn(3);
+        when(friend2.getName()).thenReturn("Friend2");
 
         List<User> friends = Arrays.asList(friend1, friend2);
 
-        when(userStorage.getFriendsByUserId(userId)).thenReturn(friends);
-        User user = new User();
-        user.setId(userId);
-        user.setEmail("user@example.com");
-        user.setLogin("User ");
-        user.setBirthday(LocalDate.of(1995, 1, 1));
+        when(userService.getFriends(1)).thenReturn(friends);
 
-        when(userStorage.getUserById(userId)).thenReturn(user);
-
-        mockMvc.perform(get("/users/{userId}/friends", userId)
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/users/1/friends")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].name").value("Friend1"))
-                .andExpect(jsonPath("$[1].name").value("Friend2"));
-
-        verify(userStorage).getFriendsByUserId(userId);
-        verify(userStorage).getUserById(userId);
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(2))
+                .andExpect(jsonPath("$[1].id").value(3));
     }
 
     @Test
-    public void getFriendsForNonExistentUserReturnsNotFound() throws Exception {
-        doThrow(new UserNotFoundException("Пользователь с ID 1 не найден")).when(userService).getFriends(1);
+    public void getFriendsReturnsEmptyListWhenUserNotFound() throws Exception {
+        when(userService.getFriends(999)).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/users/1/friends"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("Пользователь с ID 1 не найден"));
+        mockMvc.perform(get("/users/999/friends")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 }

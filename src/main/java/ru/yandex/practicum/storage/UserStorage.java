@@ -7,6 +7,8 @@ import java.util.List;
 public interface UserStorage {
     User addUser(User user);
 
+    List<User> addUsers(List<User> users);
+
     User updateUser(User user);
 
     User getUserById(int id);
@@ -15,5 +17,5 @@ public interface UserStorage {
 
     void deleteUser(int id);
 
-    List<User> getFriendsByUserId(int userId);
+    boolean userExists(Integer userId);
 }

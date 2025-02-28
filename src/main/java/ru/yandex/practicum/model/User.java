@@ -26,7 +26,4 @@ public class User {
     private Set<Integer> friends = new HashSet<>();
     private int friendCount;
 
-    public void updateFriendCount() {
-        this.friendCount = friends.size();
-    }
 }

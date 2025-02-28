@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.exception.FilmNotFoundException;
-import ru.yandex.practicum.exception.LikeNotFoundException;
 import ru.yandex.practicum.exception.UserNotFoundException;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.storage.FilmStorage;
+import ru.yandex.practicum.storage.UserStorage;
 
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,49 +18,88 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserService userService;
+    private final UserStorage userStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserService userService) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
-        this.userService = userService;
+        this.userStorage = userStorage;
     }
 
-    public void addLike(int filmId, int userId) {
-        Film film = filmStorage.getFilmById(filmId);
-        if (film == null) {
-            throw new FilmNotFoundException("Фильм не найден с ID: " + filmId);
+    public Film addFilm(Film film) {
+        return filmStorage.addFilm(film);
+    }
+
+    public List<Film> addFilms(List<Film> films) {
+        return filmStorage.addFilms(films);
+    }
+
+    public void deleteFilm(int filmId) {
+        filmStorage.deleteFilm(filmId);
+    }
+
+    public Film updateFilm(Film updatedFilm) {
+        return filmStorage.updateFilm(updatedFilm);
+    }
+
+    public List<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
+    }
+
+    public Film getFilmById(int filmId) {
+        return filmStorage.getFilmById(filmId);
+    }
+
+    public void addLike(Integer filmId, Integer userId) {
+        if (filmId == null || userId == null) {
+            throw new IllegalArgumentException("Фильм ID и пользователь ID не могут быть null");
         }
-        if (!userService.exists(userId)) {
-            throw new UserNotFoundException("Пользователь не найден с ID: " + userId);
+
+        Film film = getFilmById(filmId);
+
+        if (!userStorage.userExists(userId)) {
+            throw new UserNotFoundException("Пользователь с ID " + userId + " не найден");
         }
+
         if (!film.getLikes().contains(userId)) {
             film.getLikes().add(userId);
+            log.info("Пользователь с ID {} добавил лайк к фильму с ID {}", userId, filmId);
+        } else {
+            log.info("Пользователь с ID {} уже лайкал фильм с ID {}", userId, filmId);
         }
     }
 
-    public void removeLike(int filmId, int userId) {
-        Film film = filmStorage.getFilmById(filmId);
+    public void removeLike(Integer filmId, Integer userId) {
+        if (filmId == null || userId == null) {
+            throw new IllegalArgumentException("Фильм ID и пользователь ID не могут быть null");
+        }
+
+        Film film = getFilmById(filmId);
         if (film == null) {
             throw new FilmNotFoundException("Фильм с ID " + filmId + " не найден");
         }
-        if (!userService.exists(userId)) {
+
+        if (!userStorage.userExists(userId)) {
             throw new UserNotFoundException("Пользователь с ID " + userId + " не найден");
         }
-        if (!film.getLikes().remove((Integer) userId)) {
-            log.warn("Лайк пользователя {} не найден для фильма с ID {}", userId, filmId);
-            throw new LikeNotFoundException("Лайк не найден для пользователя " + userId + " на фильме " + filmId);
+
+        log.info("Текущие лайки для фильма {}: {}", filmId, film.getLikes());
+
+        if (!film.getLikes().remove(userId)) {
+            throw new IllegalArgumentException("Пользователь не имеет лайка к фильму с ID " + filmId);
         }
-        log.info("Лайк пользователя {} удалён для фильма с ID {}", userId, filmId);
+
+        log.info("Пользователь с ID {} убрал лайк к фильму с ID {}", userId, filmId);
     }
 
     public List<Film> getTopFilms(int count) {
-        List<Film> allFilms = filmStorage.getAllFilms();
-        if (allFilms == null || allFilms.isEmpty()) {
-            return Collections.emptyList();
+        if (count <= 0) {
+            log.warn("Запрашиваемое количество фильмов должно быть больше нуля");
+            throw new IllegalArgumentException("Количество фильмов должно быть больше нуля");
         }
-        return allFilms.stream()
-                .sorted((f1, f2) -> Integer.compare(f2.getLikes().size(), f1.getLikes().size()))
+
+        return filmStorage.getAllFilms().stream()
+                .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
     }

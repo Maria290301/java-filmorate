@@ -51,7 +51,7 @@ public class UserValidationTest {
     public void userWithEmptyLoginShouldFailValidation() {
         User user = new User();
         user.setEmail("test@example.com");
-        user.setLogin(""); // Пустой логин
+        user.setLogin("");
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);

@@ -7,7 +7,6 @@ import ru.yandex.practicum.exception.UserNotFoundException;
 import ru.yandex.practicum.model.User;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -24,6 +23,21 @@ public class InMemoryUserStorage implements UserStorage {
         users.put(user.getId(), user);
         log.info("Добавлен пользователь: {}", user);
         return user;
+    }
+
+    @Override
+    public List<User> addUsers(List<User> users) {
+        List<User> addedUsers = new ArrayList<>();
+        for (User user : users) {
+            user.setId(++counter);
+            if (user.getName() == null || user.getName().isEmpty()) {
+                user.setName(user.getLogin());
+            }
+            this.users.put(user.getId(), user);
+            log.info("Добавлен пользователь: {}", user);
+            addedUsers.add(user);
+        }
+        return addedUsers;
     }
 
     @Override
@@ -53,7 +67,7 @@ public class InMemoryUserStorage implements UserStorage {
         User user = users.get(id);
         if (user == null) {
             log.warn("Пользователь с id {} не найден", id);
-            return null;
+            throw new UserNotFoundException("Пользователь с id " + id + " не найден");
         } else {
             log.info("Получен пользователь: {}", user);
             return user;
@@ -71,22 +85,11 @@ public class InMemoryUserStorage implements UserStorage {
             log.info("Пользователь с id {} был удален", id);
         } else {
             log.warn("Попытка удалить несуществующего пользователя с id {}", id);
+            throw new UserNotFoundException("Пользователь с id " + id + " не найден");
         }
     }
 
-    @Override
-    public List<User> getFriendsByUserId(int userId) {
-        User user = getUserById(userId);
-        if (user == null) {
-            log.warn("Пользователь с id {} не найден", userId);
-            return Collections.emptyList();
-        }
-        List<User> friendsList = user.getFriends().stream()
-                .map(this::getUserById)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        log.info("Получены друзья пользователя с id {}: {}", userId, friendsList);
-        return friendsList;
+    public boolean userExists(Integer userId) {
+        return users.containsKey(userId);
     }
 }
