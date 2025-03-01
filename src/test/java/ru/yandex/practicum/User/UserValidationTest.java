@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.User;
+package ru.yandex.practicum.User;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -24,7 +24,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void userWithEmptyEmail_ShouldFailValidation() {
+    public void userWithEmptyEmailShouldFailValidation() {
         User user = new User();
         user.setEmail("");
         user.setLogin("validLogin");
@@ -36,7 +36,7 @@ public class UserValidationTest {
     }
 
     @Test
-    public void userWithInvalidEmail_ShouldFailValidation() {
+    public void userWithInvalidEmailShouldFailValidation() {
         User user = new User();
         user.setEmail("invalidEmail");
         user.setLogin("validLogin");
@@ -48,10 +48,10 @@ public class UserValidationTest {
     }
 
     @Test
-    public void userWithEmptyLogin_ShouldFailValidation() {
+    public void userWithEmptyLoginShouldFailValidation() {
         User user = new User();
         user.setEmail("test@example.com");
-        user.setLogin(""); // Пустой логин
+        user.setLogin("");
         user.setName("Test User");
         user.setBirthday(LocalDate.of(2000, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
