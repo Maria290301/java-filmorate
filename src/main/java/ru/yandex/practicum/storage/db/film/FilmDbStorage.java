@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
 import ru.yandex.practicum.exception.NotFoundException;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.model.Genre;
