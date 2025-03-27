@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.controller.FilmController;
-import ru.yandex.practicum.exception.FilmNotFoundException;
+import ru.yandex.practicum.exception.NotFoundException;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.service.FilmService;
 
@@ -149,7 +149,7 @@ public class FilmControllerTest {
         int filmId = 1;
         int userId = 2;
 
-        doThrow(new FilmNotFoundException("Film not found")).when(filmService).addLike(filmId, userId);
+        doThrow(new NotFoundException("Film not found")).when(filmService).addLike(filmId, userId);
 
         mockMvc.perform(put("/{filmId}/like/{userId}", filmId, userId))
                 .andExpect(status().isNotFound());
@@ -160,7 +160,7 @@ public class FilmControllerTest {
         int filmId = 1;
         int userId = 2;
 
-        doThrow(new UserNotFoundException("User not found")).when(filmService).addLike(filmId, userId);
+        doThrow(new NotFoundException("User not found")).when(filmService).addLike(filmId, userId);
 
         mockMvc.perform(put("/{filmId}/like/{userId}", filmId, userId))
                 .andExpect(status().isNotFound());
@@ -181,7 +181,7 @@ public class FilmControllerTest {
 
     @Test
     public void removeLikeFilmNotFoundReturnsNotFound() throws Exception {
-        doThrow(new FilmNotFoundException("Фильм с ID 1 не найден"))
+        doThrow(new NotFoundException("Фильм с ID 1 не найден"))
                 .when(filmService).removeLike(1, 1);
 
         mockMvc.perform(delete("/1/like/1"))
@@ -190,7 +190,7 @@ public class FilmControllerTest {
 
     @Test
     public void removeLikeUserNotFoundReturnsNotFound() throws Exception {
-        doThrow(new UserNotFoundException("Пользователь с ID 1 не найден"))
+        doThrow(new NotFoundException("Пользователь с ID 1 не найден"))
                 .when(filmService).removeLike(1, 1);
 
         mockMvc.perform(delete("/1/like/1"))

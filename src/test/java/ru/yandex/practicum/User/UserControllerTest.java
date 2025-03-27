@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.controller.UserController;
+import ru.yandex.practicum.exception.NotFoundException;
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.service.UserService;
 
@@ -155,7 +156,7 @@ public class UserControllerTest {
         int userId = 1;
         int friendId = 2;
 
-        doThrow(new UserNotFoundException("User not found")).when(userService).addFriend(userId, friendId);
+        doThrow(new NotFoundException("User not found")).when(userService).addFriend(userId, friendId);
 
         mockMvc.perform(put("/{userId}/friends/{friendId}", userId, friendId))
                 .andExpect(status().isNotFound());
@@ -176,7 +177,7 @@ public class UserControllerTest {
         int userId = 1;
         int friendId = 2;
 
-        doThrow(new UserNotFoundException("User not found")).when(userService).removeFriend(userId, friendId);
+        doThrow(new NotFoundException("User not found")).when(userService).removeFriend(userId, friendId);
 
         mockMvc.perform(delete("/{userId}/friends/{friendId}", userId, friendId))
                 .andExpect(status().isNotFound());
