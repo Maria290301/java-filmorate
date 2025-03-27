@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.service.UserService;
+
 
 import java.util.*;
 
@@ -54,13 +56,13 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getUsers() {
+    public List<User> getAllUsers() {
         log.info("Получен запрос на получение всех пользователей");
         return userService.getAllUsers();
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable Integer userId) {
+    public Optional<User> getUserById(@PathVariable Integer userId) {
         log.info("Получен запрос на получение пользователя с ID: {}", userId);
         return userService.getUserById(userId);
     }
@@ -74,7 +76,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}/friends/{friendId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.NO_CONTENT) // Убедитесь, что статус 204 возвращается
     public void removeFriend(@PathVariable("userId") Integer userId,
                              @PathVariable("friendId") Integer friendId) {
         log.info("Получен запрос на удаление друга: пользователь ID={}, друг ID={}", userId, friendId);
@@ -88,7 +90,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId1}/friends/common/{userId2}")
-    public List<User> getCommonFriends(@PathVariable("userId1") Integer userId1, @PathVariable("userId2") Integer userId2) {
+    public List<User> getCommonFriends(@PathVariable("userId1") Integer userId1,
+                                       @PathVariable("userId2") Integer userId2) {
         log.info("Получен запрос на получение общих друзей: пользователь1 ID={}, пользователь2 ID={}", userId1, userId2);
         return userService.getCommonFriends(userId1, userId2);
     }

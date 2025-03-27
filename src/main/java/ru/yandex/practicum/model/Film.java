@@ -10,7 +10,7 @@ import ru.yandex.practicum.exception.ReleaseDate;
 
 @Data
 public class Film {
-    private int id;
+    private Integer id;
 
     @NotBlank(message = "Название не может быть пустым")
     private String name;
@@ -27,7 +27,9 @@ public class Film {
 
     private Set<Integer> likes = new HashSet<>();
 
-    public int getLikesCount() {
-        return likes.size();
-    }
+    private Set<Genre> genres = new HashSet<>();
+
+    private Mpa mpa;
+
+    private int likesCount;
 }

@@ -1,0 +1,26 @@
+package ru.yandex.practicum.storage.mapper;
+
+import org.springframework.jdbc.core.RowMapper;
+import ru.yandex.practicum.model.Film;
+import ru.yandex.practicum.model.Mpa;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class FilmMapper implements RowMapper<Film> {
+    @Override
+    public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Film film = new Film();
+        film.setId(rs.getInt("film_id"));
+        film.setName(rs.getString("name"));
+        film.setDescription(rs.getString("description"));
+        film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+        film.setDuration(rs.getInt("duration"));
+
+        Mpa mpa = new Mpa();
+        mpa.setId(rs.getInt("mpa_id"));
+        film.setMpa(mpa);
+
+        return film;
+    }
+}

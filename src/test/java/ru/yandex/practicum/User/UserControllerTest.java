@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.yandex.practicum.controller.UserController;
-import ru.yandex.practicum.exception.UserNotFoundException;
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.service.UserService;
 
