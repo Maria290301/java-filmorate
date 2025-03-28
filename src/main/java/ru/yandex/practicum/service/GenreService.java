@@ -7,7 +7,6 @@ import ru.yandex.practicum.model.Genre;
 import ru.yandex.practicum.storage.db.genre.GenreDao;
 import java.util.Collection;
 
-
 @Service
 @RequiredArgsConstructor
 public class GenreService {

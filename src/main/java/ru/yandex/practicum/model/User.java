@@ -26,5 +26,4 @@ public class User {
     private Set<Integer> friends = new HashSet<>();
     private int friendCount;
     private Set<Friendship> friendRequests = new HashSet<>();
-
 }

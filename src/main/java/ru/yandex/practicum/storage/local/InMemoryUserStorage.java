@@ -9,7 +9,6 @@ import ru.yandex.practicum.storage.db.user.UserStorage;
 
 import java.util.*;
 
-
 @Slf4j
 @Component("InMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {

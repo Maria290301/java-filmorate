@@ -2,7 +2,7 @@
 Template repository for Filmorate project.
 
 ## Диаграмма
-![diagram.png](src%2Fmain%2Fresources%2Fdiagram.png)
+![diagram.png](src/main/resources/diagram.png)
 
 
 Данная диаграмма иллюстрирует структуру базы данных для проекта Filmorate. Она включает в себя основные таблицы, такие как:

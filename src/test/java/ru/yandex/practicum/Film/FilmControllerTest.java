@@ -249,13 +249,4 @@ public class FilmControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Popular Film 1"));
     }
-
-  /*  @Test
-    public void getTopFilmsNoFilmsReturnsEmptyList() {
-        when(filmService.getAllFilms()).thenReturn(Collections.emptyList());
-
-        List<Film> result = filmController.getTopFilms(5);
-
-        assertTrue(result.isEmpty());
-    }*/
 }

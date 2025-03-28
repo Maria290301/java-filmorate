@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.exception.*;
 import ru.yandex.practicum.model.User;
 import ru.yandex.practicum.storage.db.friendship.FriendshipDao;
-
 import ru.yandex.practicum.storage.db.user.UserDbStorage;
 import ru.yandex.practicum.storage.db.user.UserStorage;
 
