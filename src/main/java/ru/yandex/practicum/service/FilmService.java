@@ -52,7 +52,9 @@ public class FilmService {
     }
 
     public List<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        List<Film> films = filmStorage.getAllFilmsWithGenres();
+        log.trace("Returned {} films from the database", films.size());
+        return films;
     }
 
     public Film getFilmById(int filmId) {

@@ -68,6 +68,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> getAllFilmsWithGenres() {
+        return null;
+    }
+
+    @Override
     public boolean isContains(int id) {
         return false;
     }

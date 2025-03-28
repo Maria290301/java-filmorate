@@ -16,9 +16,8 @@ import ru.yandex.practicum.storage.db.mpa.MpaDao;
 import ru.yandex.practicum.storage.mapper.FilmMapper;
 import ru.yandex.practicum.storage.mapper.GenreMapper;
 
+import java.sql.*;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.*;
 
 @Slf4j
@@ -156,6 +155,20 @@ public class FilmDbStorage implements FilmStorage {
                 new GenreMapper(), filmId));
         log.trace("Genres for the movie with id {} were returned", filmId);
         return genres;
+    }
+
+    @Override
+    public List<Film> getAllFilmsWithGenres() {
+        log.debug("getAllFilmsWithGenres()");
+        String sql = "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, " +
+                "g.genre_id, g.genre_type FROM films AS f " +
+                "LEFT JOIN film_genre AS fg ON f.film_id = fg.film_id " +
+                "LEFT JOIN genre AS g ON fg.genre_id = g.genre_id " +
+                "ORDER BY f.film_id";
+
+        List<Film> films = jdbcTemplate.query(sql, new FilmMapper());
+        log.trace("Returned {} films with genres from the database", films.size());
+        return films;
     }
 
     private void deleteGenres(int filmId) {

@@ -19,5 +19,7 @@ public interface FilmStorage {
 
     Set<Genre> getGenres(int filmId);
 
+    List<Film> getAllFilmsWithGenres();
+
     boolean isContains(int id);
 }
