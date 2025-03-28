@@ -10,7 +10,7 @@ import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
-public class GenreDbService {
+public class GenreService {
     private final GenreDao genreDao;
 
     public Genre getGenreById(Integer id) {

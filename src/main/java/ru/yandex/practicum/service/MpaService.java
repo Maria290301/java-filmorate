@@ -10,7 +10,7 @@ import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
-public class MpaDbService {
+public class MpaService {
     private final MpaDao mpaDao;
 
     public Mpa getMpaById(Integer id) {

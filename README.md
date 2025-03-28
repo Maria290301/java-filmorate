@@ -2,7 +2,7 @@
 Template repository for Filmorate project.
 
 ## Диаграмма
-
+![diagram.png](src%2Fmain%2Fresources%2Fdiagram.png)
 
 
 Данная диаграмма иллюстрирует структуру базы данных для проекта Filmorate. Она включает в себя основные таблицы, такие как:
@@ -11,4 +11,4 @@ Template repository for Filmorate project.
 - **Likes**: данные о лайках пользователей.
 - **Friendships**: данные о дружбе между пользователями.
 - **Genres**: жанры фильмов.
-- **MPAARatings**: рейтинги фильмов.
+- **Mpa**: рейтинги фильмов.

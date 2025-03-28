@@ -17,13 +17,7 @@ public interface FilmStorage {
 
     Film getFilmById(int filmId);
 
-    void addGenres(int filmId, Set<Genre> genres);
-
-    void updateGenres(int filmId, Set<Genre> genres);
-
     Set<Genre> getGenres(int filmId);
-
-    void deleteGenres(int filmId);
 
     boolean isContains(int id);
 }

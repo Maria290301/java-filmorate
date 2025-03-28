@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.model.Genre;
-import ru.yandex.practicum.service.GenreDbService;
+import ru.yandex.practicum.service.GenreService;
 
 import java.util.Collection;
 
@@ -14,7 +14,7 @@ import java.util.Collection;
 @RequestMapping("/genres")
 @RequiredArgsConstructor
 public class GenreController {
-    private final GenreDbService genreService;
+    private final GenreService genreService;
 
     @GetMapping("/{id}")
     public Genre getGenreById(@PathVariable("id") Integer id) {

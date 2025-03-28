@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.exception.*;
 import ru.yandex.practicum.model.Film;
-import ru.yandex.practicum.model.Genre;
 import ru.yandex.practicum.storage.db.film.FilmDbStorage;
 import ru.yandex.practicum.storage.db.film.FilmStorage;
 import ru.yandex.practicum.storage.db.genre.GenreDao;
@@ -42,12 +41,7 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) {
-        Film thisFilm = filmStorage.addFilm(film);
-        Set<Genre> uniqueGenres = new LinkedHashSet<>(film.getGenres());
-        filmStorage.addGenres(thisFilm.getId(), uniqueGenres);
-        thisFilm.setGenres(uniqueGenres);
-        thisFilm.setMpa(mpaDao.getMpaById(thisFilm.getMpa().getId()));
-        return thisFilm;
+        return filmStorage.addFilm(film);
     }
 
     public void deleteFilm(int filmId) {
@@ -55,23 +49,11 @@ public class FilmService {
     }
 
     public Film updateFilm(Film updatedFilm) {
-        Film thisFilm = filmStorage.updateFilm(updatedFilm);
-        Set<Genre> uniqueGenres = new LinkedHashSet<>(updatedFilm.getGenres());
-        filmStorage.updateGenres(thisFilm.getId(), uniqueGenres);
-        thisFilm.setGenres(filmStorage.getGenres(thisFilm.getId()));
-        thisFilm.setMpa(mpaDao.getMpaById(thisFilm.getMpa().getId()));
-        return thisFilm;
+        return filmStorage.updateFilm(updatedFilm);
     }
 
-
     public List<Film> getAllFilms() {
-        var films = filmStorage.getAllFilms();
-        for (Film film : films) {
-            film.setGenres(filmStorage.getGenres(film.getId()));
-            film.setMpa(mpaDao.getMpaById(film.getMpa().getId()));
-            film.setLikesCount(likeDao.countLikes(film.getId()));
-        }
-        return films;
+        return filmStorage.getAllFilms();
     }
 
     public Film getFilmById(int filmId) {

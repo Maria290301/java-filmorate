@@ -63,23 +63,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void addGenres(int filmId, Set<Genre> genres) {
-
-    }
-
-    @Override
-    public void updateGenres(int filmId, Set<Genre> genres) {
-
-    }
-
-    @Override
     public Set<Genre> getGenres(int filmId) {
         return null;
-    }
-
-    @Override
-    public void deleteGenres(int filmId) {
-
     }
 
     @Override

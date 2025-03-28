@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.model.Mpa;
-import ru.yandex.practicum.service.MpaDbService;
+import ru.yandex.practicum.service.MpaService;
 
 import java.util.Collection;
 
@@ -14,7 +14,7 @@ import java.util.Collection;
 @RequestMapping("/mpa")
 @RequiredArgsConstructor
 public class MpaController {
-    private final MpaDbService mpaService;
+    private final MpaService mpaService;
 
     @GetMapping("/{id}")
     public Mpa getMpaById(@PathVariable("id") Integer id) {

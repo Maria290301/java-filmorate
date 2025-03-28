@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.exception.NotFoundException;
 import ru.yandex.practicum.model.Film;
@@ -15,8 +17,9 @@ import ru.yandex.practicum.storage.mapper.FilmMapper;
 import ru.yandex.practicum.storage.mapper.GenreMapper;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component("FilmDbStorage")
@@ -32,45 +35,42 @@ public class FilmDbStorage implements FilmStorage {
 
         int mpaId = film.getMpa().getId();
         if (!mpaDao.isContains(mpaId)) {
+            log.warn("MPA with ID {} wasn't found", mpaId);
             throw new NotFoundException("MPA with ID " + mpaId + " wasn't found");
         }
 
         log.debug("MPA ID is valid: {}", mpaId);
 
         if (film.getGenres() != null) {
-            Set<Integer> genreIds = film.getGenres().stream().map(Genre::getId).collect(Collectors.toSet());
-            for (Integer genreId : genreIds) {
-                if (!genreDao.isContains(genreId)) {
-                    throw new NotFoundException("Genre with ID " + genreId + " wasn't found");
+            for (Genre genre : film.getGenres()) {
+                if (!genreDao.isContains(genre.getId())) {
+                    log.warn("Genre with ID {} wasn't found", genre.getId());
+                    throw new NotFoundException("Genre with ID " + genre.getId() + " wasn't found");
                 }
             }
         }
 
-        jdbcTemplate.update(
-                "INSERT INTO films (name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)",
-                film.getName(),
-                film.getDescription(),
-                Date.valueOf(film.getReleaseDate()),
-                film.getDuration(),
-                mpaId);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO films (name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, film.getName());
+            ps.setString(2, film.getDescription());
+            ps.setDate(3, Date.valueOf(film.getReleaseDate()));
+            ps.setInt(4, film.getDuration());
+            ps.setInt(5, mpaId);
+            return ps;
+        }, keyHolder);
 
-        Film thisFilm = jdbcTemplate.queryForObject(
-                "SELECT film_id, name, description, release_date, duration, mpa_id FROM films WHERE name=? "
-                        + "AND description=? AND release_date=? AND duration=? AND mpa_id=? LIMIT 1",
-                new FilmMapper(), film.getName(),
-                film.getDescription(),
-                Date.valueOf(film.getReleaseDate()),
-                film.getDuration(),
-                mpaId);
+        film.setId(keyHolder.getKey().intValue());
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
-            Set<Genre> uniqueGenres = new HashSet<>(film.getGenres());
-            assert thisFilm != null;
-            addGenres(thisFilm.getId(), uniqueGenres);
+            addGenres(film.getId(), film.getGenres());
         }
 
-        log.trace("The movie {} was added to the database", thisFilm);
-        return thisFilm;
+        log.trace("The movie {} was added to the database", film);
+        return film;
     }
 
     @Override
@@ -95,8 +95,6 @@ public class FilmDbStorage implements FilmStorage {
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
             Set<Genre> uniqueGenres = new HashSet<>(film.getGenres());
             updateGenres(thisFilm.getId(), uniqueGenres);
-        } else {
-            deleteGenres(thisFilm.getId());
         }
 
         log.trace("The movie {} was updated in the database", thisFilm);
@@ -128,24 +126,12 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-    @Override
-    public void addGenres(int filmId, Set<Genre> genres) {
+    private void addGenres(int filmId, Set<Genre> genres) {
         log.debug("addGenres({}, {})", filmId, genres);
-
-        Set<Genre> existingGenres = getGenres(filmId);
 
         Set<Genre> uniqueGenres = new HashSet<>();
 
         for (Genre genre : genres) {
-            boolean exists = existingGenres.stream()
-                    .anyMatch(existingGenre -> existingGenre.getId().equals(genre.getId()) ||
-                            existingGenre.getName().equalsIgnoreCase(genre.getName()));
-
-            if (exists) {
-                log.trace("Genre {} already exists for movie {}", genre.getName(), filmId);
-                continue;
-            }
-
             if (uniqueGenres.add(genre)) {
                 jdbcTemplate.update("INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)", filmId, genre.getId());
                 log.trace("Genre {} was added to movie {}", genre.getName(), filmId);
@@ -155,12 +141,9 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    @Override
-    public void updateGenres(int filmId, Set<Genre> genres) {
+    private void updateGenres(int filmId, Set<Genre> genres) {
         log.debug("updateGenres({}, {})", filmId, genres);
-
         deleteGenres(filmId);
-
         addGenres(filmId, genres);
     }
 
@@ -175,8 +158,7 @@ public class FilmDbStorage implements FilmStorage {
         return genres;
     }
 
-    @Override
-    public void deleteGenres(int filmId) {
+    private void deleteGenres(int filmId) {
         log.debug("deleteGenres({})", filmId);
         jdbcTemplate.update("DELETE FROM film_genre WHERE film_id=?", filmId);
         log.trace("All genres were removed for a movie with id {}", filmId);
