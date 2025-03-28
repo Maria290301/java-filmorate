@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.exception.NotFoundException;
 import ru.yandex.practicum.model.Film;
 import ru.yandex.practicum.model.Genre;
@@ -58,5 +57,4 @@ public class FilmDbStorageTest {
         NotFoundException exception = assertThrows(NotFoundException.class, () -> filmDbStorage.addFilm(film));
         assertEquals("Genre with ID 999 wasn't found", exception.getMessage());
     }
-
 }

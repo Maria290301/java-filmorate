@@ -15,7 +15,6 @@ import ru.yandex.practicum.model.Mpa;
 import ru.yandex.practicum.storage.db.mpa.MpaDaoImpl;
 import ru.yandex.practicum.storage.mapper.MpaMapper;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MpaDaoImplTest {
