@@ -30,13 +30,6 @@ public class FilmController {
         return filmService.addFilm(film);
     }
 
-    @PostMapping("/batch")
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<Film> addFilms(@Valid @RequestBody List<Film> films) {
-        log.info("Получен запрос на создание нескольких фильмов");
-        return filmService.addFilms(films);
-    }
-
     @DeleteMapping("/{filmId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFilm(@PathVariable int filmId) {

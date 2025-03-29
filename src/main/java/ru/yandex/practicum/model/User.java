@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Data
 public class User {
-    private int id;
+    private Integer id;
     @NotBlank(message = "Электронная почта не может быть пустой")
     @Email(message = "Электронная почта должна содержать символ @")
     private String email;
@@ -25,5 +25,5 @@ public class User {
 
     private Set<Integer> friends = new HashSet<>();
     private int friendCount;
-
+    private Set<Friendship> friendRequests = new HashSet<>();
 }

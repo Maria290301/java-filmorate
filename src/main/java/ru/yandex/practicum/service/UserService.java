@@ -2,11 +2,13 @@ package ru.yandex.practicum.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.exception.ConflictException;
-import ru.yandex.practicum.exception.UserNotFoundException;
+import ru.yandex.practicum.exception.*;
 import ru.yandex.practicum.model.User;
-import ru.yandex.practicum.storage.InMemoryUserStorage;
+import ru.yandex.practicum.storage.db.friendship.FriendshipDao;
+import ru.yandex.practicum.storage.db.user.UserDbStorage;
+import ru.yandex.practicum.storage.db.user.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,11 +16,14 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserService {
-    private final InMemoryUserStorage userStorage;
+    private final UserStorage userStorage;
+    private final FriendshipDao friendshipDao;
 
     @Autowired
-    public UserService(InMemoryUserStorage userStorage) {
+    public UserService(@Qualifier("UserDbStorage") UserDbStorage userStorage,
+                       FriendshipDao friendshipDao) {
         this.userStorage = userStorage;
+        this.friendshipDao = friendshipDao;
     }
 
     public User addUser(User user) {
@@ -33,7 +38,7 @@ public class UserService {
         return userStorage.updateUser(user);
     }
 
-    public User getUserById(int id) {
+    public Optional<User> getUserById(int id) {
         return userStorage.getUserById(id);
     }
 
@@ -48,62 +53,50 @@ public class UserService {
     public void addFriend(int userId, int friendId) {
         log.info("Попытка добавить друга: пользователь ID={}, друг ID={}", userId, friendId);
 
-        User user = getUserById(userId);
-        User friend = getUserById(friendId);
-
-        if (user == null) {
+        User user = getUserById(userId).orElseThrow(() -> {
             log.warn("Пользователь не найден: userId={}", userId);
-            throw new UserNotFoundException("Пользователь не найден");
-        }
+            throw new NotFoundException("Пользователь не найден");
+        });
 
-        if (friend == null) {
+        User friend = getUserById(friendId).orElseThrow(() -> {
             log.warn("Друг не найден: friendId={}", friendId);
-            throw new UserNotFoundException("Друг не найден");
-        }
-
-        if (user.getFriends() == null) {
-            user.setFriends(new HashSet<>());
-        }
-
-        if (friend.getFriends() == null) {
-            friend.setFriends(new HashSet<>());
-        }
-
-        if (!user.getFriends().contains(friendId)) {
-            user.getFriends().add(friendId);
-            log.info("Пользователь {} добавлен в друзья к пользователю {}", friendId, userId);
-        } else {
-            log.warn("Пользователь {} уже в друзьях у пользователя {}", friendId, userId);
-            throw new ConflictException("Пользователь уже в друзьях");
-        }
-
-        if (!friend.getFriends().contains(userId)) {
-            friend.getFriends().add(userId);
-            log.info("Пользователь {} добавлен в друзья к пользователю {}", userId, friendId);
-        }
+            throw new NotFoundException("Друг не найден");
+        });
+        friendshipDao.addFriend(userId, friendId, true);
+        log.info("Пользователь {} добавлен в друзья к пользователю {}", friendId, userId);
     }
 
     public void removeFriend(int userId, int friendId) {
-        User user = getUserById(userId);
-        User friend = getUserById(friendId);
-
-        if (user == null || friend == null) {
-            throw new UserNotFoundException("Один из пользователей не найден");
+        if (!userStorage.userExists(userId) || !userStorage.userExists(friendId)) {
+            throw new NotFoundException("Один из пользователей не найден");
         }
 
-        user.getFriends().remove(Integer.valueOf(friendId));
-        friend.getFriends().remove(Integer.valueOf(userId));
-        log.info("Пользователь {} удален из друзей пользователя {}", friendId, userId);
+        if (!friendshipDao.isFriend(userId, friendId)) {
+            log.warn("Попытка удалить дружбу, которая не существует между пользователями {} и {}", userId, friendId);
+            return;
+        }
+
+        try {
+            friendshipDao.deleteFriend(userId, friendId);
+            log.info("Дружба между пользователями {} и {} удалена", userId, friendId);
+        } catch (Exception e) {
+            log.error("Ошибка при удалении дружбы между пользователями {} и {}: {}", userId, friendId, e.getMessage());
+            throw new RuntimeException("Не удалось удалить дружбу. Пожалуйста, попробуйте позже.", e);
+        }
     }
 
     public List<User> getCommonFriends(int userId1, int userId2) {
-        User user1 = getUserById(userId1);
-        User user2 = getUserById(userId2);
+        User user1 = getUserById(userId1).orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId1 + " не найден"));
+        User user2 = getUserById(userId2).orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId2 + " не найден"));
 
-        Set<Integer> friendsSet = new HashSet<>(user1.getFriends());
-        List<User> commonFriends = user2.getFriends().stream()
-                .filter(friendsSet::contains)
+        List<Integer> friendsUser1 = friendshipDao.getFriends(userId1);
+        List<Integer> friendsUser2 = friendshipDao.getFriends(userId2);
+
+        List<User> commonFriends = friendsUser1.stream()
+                .filter(friendsUser2::contains)
                 .map(this::getUserById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
 
         log.info("Общие друзья между пользователями {} и {}: {}", userId1, userId2, commonFriends);
@@ -111,19 +104,17 @@ public class UserService {
     }
 
     public List<User> getFriends(int userId) {
-        User user = getUserById(userId);
-        if (user == null || user.getFriends() == null) {
-            log.warn("Пользователь с ID {} не найден или у него нет друзей", userId);
-            return Collections.emptyList();
-        }
+        User user = getUserById(userId).orElseThrow(() -> new NotFoundException("Пользователь с ID " + userId + " не найден"));
 
+        List<Integer> friendIds = friendshipDao.getFriends(userId);
         List<User> friendsList = new ArrayList<>();
-        for (Integer friendId : user.getFriends()) {
-            User friend = getUserById(friendId);
+        for (Integer friendId : friendIds) {
+            User friend = getUserById(friendId).orElse(null);
             if (friend != null) {
                 friendsList.add(friend);
             }
         }
+
         log.info("Друзья пользователя с ID {}: {}", userId, friendsList);
         return friendsList;
     }
