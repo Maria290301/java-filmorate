@@ -77,7 +77,6 @@ public class FilmController {
         return filmService.findFilmsOfDirector(directorId, sortBy);
     }
 
-
     @GetMapping("/user/{id}")
     public List<FilmDto> getFilmsByUser(@PathVariable int id) {
         return filmService.getFilmsByUserId(id);
